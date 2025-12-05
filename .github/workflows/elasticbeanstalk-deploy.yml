@@ -1,0 +1,45 @@
+name: e-market
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install EB CLI
+        run: pip install awsebcli
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Create AWS default profile
+        run: |
+              mkdir -p ~/.aws
+              cat > ~/.aws/credentials <<EOF
+              [default]
+              aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY_ID }}
+              aws_secret_access_key = ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+              EOF
+                  cat > ~/.aws/config <<EOF
+              [default]
+              region = ${{ secrets.AWS_REGION }}
+              EOF
+
+      - name: Deploy to EB
+        run: eb deploy my-django-env --staged

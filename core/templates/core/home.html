@@ -1,0 +1,672 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}About Us • Mega Jewellery{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'core/css/home.css' %}">
+<style>
+  /* ---------------------------
+  Improved rent-banner with softened GIF + contrast overlay
+  Replace your existing .rent-banner and .rent-banner::before
+  --------------------------- */
+
+
+
+
+  /* ---------------------------
+  Improved rent-banner with softened GIF + contrast overlay
+  Replace your existing .rent-banner and .rent-banner::before
+  --------------------------- */
+
+  .rent-banner {
+    /* use your GIF here (center/cover) */
+    background: url("media/static/core/images/eCommerce-Animated-GIF.gif") no-repeat center center / cover;
+    position: relative;
+    padding: 60px 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 0;
+    /* keep as you prefer */
+    /* subtle entrance */
+    animation: fadeIn 1.0s ease both;
+  }
+
+  /* blurred & gently scaled moving layer (keeps GIF motion but mutes details) */
+  .rent-banner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("media/static/core/images/eCommerce-Animated-GIF.gif") no-repeat center center / cover;
+    will-change: transform, filter, opacity;
+    transform: scale(1.06);
+    /* slight scale so blur doesn't show edges */
+    filter: blur(8px) saturate(0.9) brightness(0.92);
+    opacity: 0.75;
+    /* control overall visibility of GIF */
+    z-index: 0;
+  }
+
+  /* warm/peach overlay to unify with navbar and improve text contrast */
+  .rent-banner::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.08));
+    z-index: 1;
+    pointer-events: none;
+    mix-blend-mode: normal;
+  }
+
+  /* ensure content sits above layers and is readable */
+  .rent-banner .rent-inner,
+  .rent-banner .rent-text,
+  .rent-banner .rent-images {
+    position: relative;
+    z-index: 5;
+    /* above gif/overlay */
+  }
+
+  .rent-text {
+    font-weight: 600;
+  }
+
+  /* Optional: add a subtle glass behind text to increase legibility (small box) */
+  .rent-banner .rent-text {
+    /* if you want a pill/box behind the left text, uncomment and adjust: */
+    /* background: rgba(255,255,255,0.6); */
+    /* padding: 8px 12px; */
+    /* border-radius: 8px; */
+    /* backdrop-filter: blur(4px); */
+  }
+
+  /* Reduce motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+
+    .rent-banner,
+    .rent-banner::before {
+      animation: none !important;
+      filter: none !important;
+      transform: none !important;
+    }
+
+    .rent-banner::before {
+      opacity: 0.55;
+    }
+
+    /* keep a faint texture */
+  }
+
+  /* Responsive: slightly increase overlay & reduce blur on small screens */
+  @media (max-width: 992px) {
+    .rent-banner::before {
+      filter: blur(6px) brightness(0.92);
+      transform: scale(1.02);
+    }
+
+    .rent-banner::after {
+      background: linear-gradient(180deg, rgba(255, 245, 235, 0.55), rgba(255, 235, 210, 0.35));
+    }
+
+    .rent-banner {
+      padding: 40px 6%;
+    }
+  }
+
+  /* tweak CTA contrast if needed */
+  .rent-banner .btn-yellow {
+    background: linear-gradient(180deg, #ffd44a, #f2c200);
+    color: #111;
+    box-shadow: 0 8px 20px rgba(18, 22, 30, 0.06);
+    border: none;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="rent-banner">
+  <div class="rent-inner">
+    <!-- Left Content -->
+    <div class="rent-text">
+      <h2>Your One-Stop Marketplace for Quality & Convenience</h2>
+      <p>
+        Explore top categories including Electronics, Fashion, Home & Kitchen, Beauty, Groceries, and Lifestyle. Find
+        the best deals, trending products, and trusted brands curated for your everyday needs.
+      </p>
+      <a href="{% url 'rental_page' %}" class="btn-yellow">Start Shopping</a>
+    </div>
+
+    <!-- Right Images -->
+    <div class="rent-images">
+      <div class="img-back"><img src="media\static\core\ecom\lighting_and_lamps\image27.jpg" alt="Jewelry Model"></div>
+      <div class="img-front">
+        <img src="media/static/core/images/image.png" alt="Jewelry Model">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="category-section">
+  <div class="category-container">
+    <h2 class="category-title">Shop by Category</h2>
+    <p class="category-subtitle">Everything you need, all in one marketplace</p>
+  </div>
+
+
+  <div class="category-grid">
+    {% for category in categories %}
+    <div class="category-card">
+      {% if category.slug %}
+      <a href="{% url 'parent_category' category.slug %}">
+        {% else %}
+        <a href="#">
+          {% endif %}
+          <img src="{{ category.image.url }}" alt="{{ category.name }}">
+          <h3 style="color:#000; background:#fff;">{{ category.name|default:'(no name)' }}</h3>
+        </a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ====== New Arrivals Section ====== -->
+<div class="new-arrivals">
+  <h2 class="section-title">New Arrivals</h2>
+  <p class="section-subtitle">Explore the newest additions to our collection</p>
+</div>
+<div class="arrival">
+  {% for category in categories %}
+  <div class="category-block">
+
+
+    <div class="product-grid">
+      {% for product in category.preview_products %}
+      <div class="product-card">
+        <!-- Wishlist -->
+        <button class="wishlist"><i class="fa-regular fa-heart"></i></button>
+
+        <!-- Product Image -->
+        <a href="{% url 'product_detail' product.id %}">
+          {% if product.image and product.image.url %}
+          <img src="{{ product.image.url }}" alt="{{ product.name }}">
+          {% else %}
+          <img src="{% static 'core/images/placeholder.png' %}" alt="{{ product.name }}">
+          {% endif %}
+        </a>
+
+        <!-- Name & Rating -->
+        <div class="product-header">
+          <h3>{{ product.name }}</h3>
+          <span class="rating"><i class="fa fa-star"></i> {{ product.rating }}</span>
+        </div>
+
+        <!-- Short Description -->
+        <p class="short-desc">{{ product.short_description|default:"Elegant jewelry piece" }}</p>
+
+        <!-- Price & Rent Now -->
+        <div class="product-footer">
+          <span class="price">₹{{ product.price_per_day }}</span>
+          {% if user.is_authenticated %}
+          <a href="{% url 'add_to_cart' product.id %}" onclick="alert('✅ {{ product.name }} rented successfully!');"
+            class="btn-rent">Add to cart</a>
+          {% else %}
+          <a href="{% url 'login' %}" onclick="alert('⚠️ Please login to rent this product');" class="btn-rent">Add to
+            cart</a>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<!-- Toast container -->
+<div class="toast-wrap" id="toastWrap" aria-live="polite" aria-atomic="true" style="display:none;">
+  <div class="toast" id="toast">
+    <div class="ico" id="toastIco">✓</div>
+    <div class="text" id="toastText">Added to cart</div>
+    <button class="close" id="toastClose" aria-label="Close">&times;</button>
+  </div>
+</div>
+
+<!-- Promo Banner -->
+<section class="promo-loop" aria-label="Promotions">
+  <div class="promo-viewport">
+    <div class="promo-track">
+      <!-- slide 1 -->
+      <article class="promo-slide" role="group" aria-roledescription="slide" aria-label="Promo 1">
+        <div class="slide-img"><img src="{{ banner.product_image.url }}" alt="Promo image 1"></div>
+        <div class="slide-content">
+          <h3>{{ banner.title }}</h3>
+          <p>{{ banner.subtitle |truncatewords:10 }}</p>
+          {% if promo.code %}<small>Use code <b>{{ promo.code }}</b></small>{% endif %}
+          <a href="{% url 'rental_page' %}" class="btn-accent">{{ banner.button_text }}</a>
+        </div>
+      </article>
+
+      <!-- slide 2 -->
+      <article class="promo-slide" role="group" aria-roledescription="slide" aria-label="Promo 2">
+        <div class="slide-img"><img src="media/static/core/ecom/ethnic_wear/image7.jpg" alt="Promo image 2"></div>
+        <div class="slide-content">
+          <h3>Seasonal Picks</h3>
+          <p>Limited time styles picked for this season.</p>
+          <a href="{% url 'rental_page' %}" class="btn-accent">Shop Now</a>
+        </div>
+      </article>
+
+      <!-- slide 3 -->
+      <article class="promo-slide" role="group" aria-roledescription="slide" aria-label="Promo 3">
+        <div class="slide-img"><img src="media/static/core/ecom/ethnic_wear/image23.jpg" alt="Promo image 3"></div>
+        <div class="slide-content">
+          <h3>Best Sellers</h3>
+          <p>Top rated items customers love — trending now.</p>
+          <a href="{% url 'rental_page' %}" class="btn-accent">Explore</a>
+        </div>
+      </article>
+
+      <!-- slide 4 -->
+      <article class="promo-slide" role="group" aria-roledescription="slide" aria-label="Promo 4">
+        <div class="slide-img"><img src="media/static/core/ecom/cookware_and_utensils/image6.jpg" alt="Promo image 4"></div>
+        <div class="slide-content">
+          <h3>New Arrivals</h3>
+          <p>Freshly added — discover new arrivals daily.</p>
+          <a href="{% url 'rental_page' %}" class="btn-accent">Discover</a>
+        </div>
+      </article>
+
+      <!-- duplicated slides for smooth infinite loop -->
+      <article class="promo-slide slide-dup" aria-hidden="true">
+        <div class="slide-img"><img src="{{ banner.product_image.url }}" alt=""></div>
+        <div class="slide-content"><h3>{{ banner.title }}</h3><p>{{ banner.subtitle |truncatewords:10 }}</p><a class="btn-accent" href="{% url 'rental_page' %}">{{ banner.button_text }}</a></div>
+      </article>
+      <article class="promo-slide slide-dup" aria-hidden="true">
+        <div class="slide-img"><img src="{% static 'core/images/banner1.png' %}" alt=""></div>
+        <div class="slide-content"><h3>Seasonal Picks</h3><p>Limited time styles.</p><a class="btn-accent" href="{% url 'rental_page' %}">Shop Now</a></div>
+      </article>
+      <article class="promo-slide slide-dup" aria-hidden="true">
+        <div class="slide-img"><img src="{% static 'core/images/banner2.png' %}" alt=""></div>
+        <div class="slide-content"><h3>Best Sellers</h3><p>Top rated items.</p><a class="btn-accent" href="{% url 'rental_page' %}">Explore</a></div>
+      </article>
+      <article class="promo-slide slide-dup" aria-hidden="true">
+        <div class="slide-img"><img src="{% static 'core/images/banner3.png' %}" alt=""></div>
+        <div class="slide-content"><h3>New Arrivals</h3><p>Freshly added.</p><a class="btn-accent" href="{% url 'rental_page' %}">Discover</a></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Trending Now -->
+<section class="trending-now">
+  <h2 class="r1">Trending Now</h2>
+  <p class="r2">Bestselling styles you won’t want to miss!</p>
+
+  {% for section in featured %}
+  <div class="featured-block {{ section.position }}">
+    {% if section.position == "left" %}
+    <div class="featured-img"><img src="{{ section.image.url }}" alt=""></div>
+    <div class="featured-text">
+      <h3>{{ section.title }}</h3>
+      <h5>{{ section.subtitle }}</h5>
+      <p>{{ section.description }}</p>
+      <a href="{% url 'rental_page' %}" class="btn-green">{{ section.button_text }}</a>
+    </div>
+    {% else %}
+    <div class="featured-text">
+      <h3>{{ section.title }}</h3>
+      <h5>{{ section.subtitle }}</h5>
+      <p>{{ section.description }}</p>
+      <a href="{{ section.button_link }}" class="btn-green">{{ section.button_text }}</a>
+    </div>
+    <div class="featured-img"><img src="{{ section.image.url }}" alt=""></div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</section>
+
+<!-- Services Section -->
+<section class="services">
+  <h2>Services</h2>
+  <p>Trust us with your jewelry</p>
+
+  <div class="services-grid">
+    {% for service in services %}
+    <div class="service-card">
+      <div class="service-img">
+        <img src="{{ service.image.url }}" alt="{{ service.title }}">
+      </div>
+      <h4>{{ service.title }}</h4>
+      <p>{{ service.subtitle }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Customer Stories -->
+<section class="customer-stories">
+  <h2 class="stories-title">Customer Stories</h2>
+  <p class="stories-subtitle">What Our Customers Are Saying</p>
+
+  <div class="carousel-container">
+    <div class="carousel-track">
+      {% for t in testimonials %}
+      <div class="testimonial-card">
+        <div class="testimonial-content">
+          <span class="quote">❝</span>
+          <p>{{ t.message }}</p>
+        </div>
+        <div class="testimonial-footer">
+          <img src="{{ t.photo.url }}" alt="{{ t.name }}">
+          <div>
+            <h4>{{ t.name }}</h4>
+            <span>{{ t.role }}</span>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Dots -->
+    <div class="carousel-dots">
+      {% for t in testimonials %}
+      <span class="dot {% if forloop.first %}active{% endif %}"></span>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<!-- FAQ -->
+<section class="faq-section">
+  <h2>Frequently Asked Questions</h2>
+  <p>Answers to your most common queries</p>
+
+  <div class="faq-item">
+    <div class="faq-question">
+      Do you offer free shipping?
+      <span class="arrow">&#9662;</span>
+    </div>
+    <div class="faq-answer">
+      Yes, we offer free shipping on all domestic orders. International shipping costs may apply based on the
+      destination.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-question">
+      What payment methods do you accept?
+      <span class="arrow">&#9662;</span>
+    </div>
+    <div class="faq-answer">
+      We accept all major credit/debit cards, UPI, Net Banking, PayPal, and wallets such as Google Pay and PhonePe.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-question">
+      Can I return or exchange a product?
+      <span class="arrow">&#9662;</span>
+    </div>
+    <div class="faq-answer">
+      Yes, you can return or exchange items within 7 days of delivery, provided they are unworn and in original
+      packaging.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-question">
+      Do you offer customization or personalized jewelry?
+      <span class="arrow">&#9662;</span>
+    </div>
+    <div class="faq-answer">
+      Absolutely! We provide customization options for rings, necklaces, and bracelets. Our experts will work with you
+      to create your dream piece.
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-question">
+      Do you ship to Coimbatore and other Tier 2 cities?
+      <span class="arrow">&#9662;</span>
+    </div>
+    <div class="faq-answer">
+      Yes, we ship to Coimbatore and across India, including Tier 2 and Tier 3 cities. Delivery time may vary based on
+      location.
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const track = document.querySelector(".carousel-track");
+    const cards = document.querySelectorAll(".testimonial-card");
+
+    // 👇 number of slides = total cards / 3
+    const slidesToShow = 3;
+    const totalSlides = Math.ceil(cards.length / slidesToShow);
+
+    // Build dots dynamically based on slides
+    const dotsContainer = document.querySelector(".carousel-dots");
+    dotsContainer.innerHTML = ""; // clear old
+    for (let i = 0; i < totalSlides; i++) {
+      const dot = document.createElement("span");
+      dot.classList.add("dot");
+      if (i === 0) dot.classList.add("active");
+      dotsContainer.appendChild(dot);
+    }
+    const dots = document.querySelectorAll(".dot");
+
+    let index = 0;
+
+    function showSlide(i) {
+      track.style.transform = `translateX(-${i * 100}%)`;
+      dots.forEach(dot => dot.classList.remove("active"));
+      dots[i].classList.add("active");
+    }
+
+    // Auto play
+    setInterval(() => {
+      index = (index + 1) % totalSlides;
+      showSlide(index);
+    }, 4000);
+
+    // Dots click
+    dots.forEach((dot, i) => {
+      dot.addEventListener("click", () => {
+        index = i;
+        showSlide(index);
+      });
+    });
+  });
+  // Wishlist toggle
+  document.querySelectorAll('.wishlist').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('active');
+      btn.querySelector('i').classList.toggle('fa-regular');
+      btn.querySelector('i').classList.toggle('fa-solid');
+    });
+  });
+  //   FAQ
+  document.querySelectorAll(".faq-question").forEach((question) => {
+    question.addEventListener("click", () => {
+      const item = question.parentElement;
+
+      // Close other open items
+      document.querySelectorAll(".faq-item").forEach((faq) => {
+        if (faq !== item) faq.classList.remove("active");
+      });
+
+      // Toggle current item
+      item.classList.toggle("active");
+    });
+  });
+
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const toastWrap = document.getElementById("toastWrap");
+    const toast = document.getElementById("toast");
+    const toastText = document.getElementById("toastText");
+    const toastClose = document.getElementById("toastClose");
+    const toastIco = document.getElementById("toastIco");
+    let hideTimer = null;
+
+    function showToast(message, type = "success", autoClose = true, redirectUrl = null, delayMs = 700) {
+      // set content
+      toastText.textContent = message;
+      toastIco.textContent = type === "success" ? "✓" : "⚠";
+      // show
+      toastWrap.style.display = "block";
+      toast.classList.remove("hide");
+      toast.classList.add("show");
+      // clear old timer
+      if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+      // schedule hide
+      if (autoClose) {
+        hideTimer = setTimeout(() => {
+          closeToast();
+          if (redirectUrl) window.location.href = redirectUrl;
+        }, delayMs + 600); // leave time for visible animation
+        // also redirect slightly earlier to feel instant
+        if (redirectUrl) {
+          setTimeout(() => window.location.href = redirectUrl, delayMs);
+        }
+      }
+    }
+
+    function closeToast() {
+      toast.classList.remove("show");
+      toast.classList.add("hide");
+      // after animation, hide container
+      setTimeout(() => { toastWrap.style.display = "none"; }, 300);
+      if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+    }
+
+    toastClose.addEventListener("click", function (e) {
+      e.preventDefault();
+      closeToast();
+    });
+
+    // Intercept all rent links (.btn-rent). Works without changing existing HTML.
+    document.querySelectorAll(".btn-rent").forEach(function (link) {
+      // remove any inline onclick to avoid duplicate alerts
+      if (link.hasAttribute("onclick")) link.removeAttribute("onclick");
+
+      link.addEventListener("click", function (ev) {
+        ev.preventDefault();
+        ev.stopPropagation();
+
+        const href = link.href;
+        // product name fallback from nearest h3 or h4 inside card
+        const card = link.closest(".product-card");
+        let pname = "";
+        if (card) {
+          const title = card.querySelector("h3, h4");
+          if (title) pname = title.textContent.trim();
+        }
+        // Detect if link goes to login (simple heuristic: contains '/login' or named URL)
+        const isLogin = href && href.match(/\/login/);
+
+        if (isLogin) {
+          showToast("Please login to rent this product", "warning", true, href, 900);
+          return;
+        }
+
+        // Show rented toast, then follow link
+        const msg = pname ? `✅ ${pname} added successfully!` : "✅ Product added successfully!";
+        showToast(msg, "success", true, href, 700);
+      });
+    });
+  });
+
+
+(function() {
+  // Respect reduced motion users
+  const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) {
+    document.querySelectorAll('.category-card').forEach(c => {
+      c.style.opacity = '1';
+      c.style.transform = 'none';
+      c.setAttribute('data-animated', 'true');
+    });
+    return;
+  }
+
+  const grid = document.querySelector('.category-grid');
+  if (!grid) return;
+
+  const cards = Array.from(grid.querySelectorAll('.category-card'));
+  if (!cards.length) return;
+
+  const STAGGER = 90; // ms between card reveals
+  const ioOptions = { root: null, rootMargin: '0px 0px -10% 0px', threshold: 0.06 };
+
+  const revealed = new WeakSet();
+
+  const io = new IntersectionObserver((entries, observer) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+
+      // get the index of the first visible card within the grid
+      // We'll reveal cards in DOM order with a small stagger
+      cards.forEach((card, idx) => {
+        if (revealed.has(card)) return; // already animated
+        setTimeout(() => {
+          // mark as revealed — use attribute so selector matches CSS above
+          card.setAttribute('data-animated', 'true');
+          // optional per-card animation delay to ensure nice staggering
+          card.style.animationDelay = '0ms';
+          // ensure visible even if animation hasn't started
+          card.style.opacity = '1';
+        }, idx * STAGGER);
+        revealed.add(card);
+      });
+
+      // once we've scheduled reveal for all cards, stop observing
+      observer.disconnect();
+      break;
+    }
+  }, ioOptions);
+
+  io.observe(grid);
+})();
+
+(function(){
+  // pick elements
+  const track = document.querySelector('.promo-track');
+  const viewport = document.querySelector('.promo-viewport');
+  if (!track || !viewport) return;
+
+  // When slides are duplicated in markup you should have a seamless loop.
+  // This script measures the track visible width and sets a CSS variable
+  // --promo-speed so the scrolling speed stays consistent across screen sizes & slide counts.
+
+  function updateSpeed(){
+    // total visible width to move equals half the track's scrollWidth (since duplicates)
+    const totalWidth = track.scrollWidth;
+    // fallback base speed (ms per 1000px)
+    const msPer1000 = 3600; // 3.6s per 1000px (adjust for faster/slower)
+    // compute duration proportional to distance to move (50% of track width)
+    const distance = totalWidth / 2;
+    const durationSeconds = Math.max(10, Math.round((distance / 1000) * (msPer1000/1000))); // min 10s
+    // set CSS variable
+    track.style.setProperty('--promo-speed', durationSeconds + 's');
+    // also set root var for fallback usage
+    document.documentElement.style.setProperty('--promo-speed', durationSeconds + 's');
+  }
+
+  // run on load & resize (debounced)
+  window.addEventListener('load', updateSpeed);
+  let t=0;
+  window.addEventListener('resize', function(){ clearTimeout(t); t=setTimeout(updateSpeed, 120); });
+
+  // if user prefers reduced motion, pause animation
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) track.style.animationPlayState = 'paused';
+})();
+
+
+</script>
+
+
+
+{% endblock %}
