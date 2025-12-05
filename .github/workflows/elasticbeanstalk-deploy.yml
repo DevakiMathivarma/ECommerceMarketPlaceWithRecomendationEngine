@@ -42,4 +42,4 @@ jobs:
               EOF
 
       - name: Deploy to EB
-        run: eb deploy my-django-env --staged
+        run: eb deploy My-django-env-prod-env  --staged

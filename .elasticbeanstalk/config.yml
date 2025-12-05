@@ -1,6 +1,6 @@
 branch-defaults:
   default:
-    environment: my-django-env
+    environment: My-django-env-prod-env 
 global:
   application_name: e-market
   branch: null
